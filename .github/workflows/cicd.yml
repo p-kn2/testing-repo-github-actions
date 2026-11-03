@@ -27,6 +27,11 @@ jobs:
       - name: checkout the repo
         uses: actions/checkout@v4
 
+      - name: Git leaks installation
+        run: sudo apt install gitleaks -y
+      - name: Git leaks code scan
+        run: gitleaks detect source . -r gitleaks-report.json -f json
+        
       - name: Trivy installation
         run: |
           sudo apt-get install -y wget apt-transport-https gnupg lsb-release
@@ -38,10 +43,7 @@ jobs:
       - name: Trivy Fs scan
         run: trivy fs --format table -o fs-report.json .
         
-      - name: Git leaks installation
-        run: sudo apt install gitleaks -y
-      - name: Git leaks code scan
-        run: gitleaks detect source . -r gitleaks-report.json -f json
+
         
 
 
