@@ -32,6 +32,25 @@ jobs:
          mvn --version  
 
 
+- name: Setup Maven
+  run: |
+    if ! command -v mvn >/dev/null 2>&1; then
+      echo "Maven not found. Installing..."
+
+      sudo apt-get \
+        -o DPkg::Lock::Timeout=120 \
+        update
+
+      sudo apt-get \
+        -o DPkg::Lock::Timeout=120 \
+        install -y maven
+    else
+      echo "Maven already installed"
+    fi
+
+    mvn --version
+
+
   security-checksjob:
     runs-on: [self-hosted, ec2]
     needs: firstjob
