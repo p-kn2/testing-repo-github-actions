@@ -30,13 +30,20 @@ jobs:
         with:
           fetch-depth: 0
 
-      # Install Gitleaks only if it is not already installed
+      # -------------------------
+      # GITLEAKS
+      # -------------------------
+
       - name: Setup Gitleaks
         run: |
           if ! command -v gitleaks >/dev/null 2>&1; then
+            echo "Gitleaks not found. Installing..."
             sudo apt-get update
             sudo apt-get install -y gitleaks
+          else
+            echo "Gitleaks already installed"
           fi
+
           gitleaks version
 
       - name: Gitleaks scan
@@ -47,12 +54,33 @@ jobs:
             --report-format json \
             --verbose
 
-      # Install/setup Trivy
+
+      # -------------------------
+      # TRIVY
+      # -------------------------
+
       - name: Setup Trivy
-        uses: aquasecurity/setup-trivy@e07451d2e059ed86c2870430ea286b3a9e0bf241
-        with:
-          version: v0.68.2
-          cache: true
+        run: |
+          if ! command -v trivy >/dev/null 2>&1; then
+            echo "Trivy not found. Installing..."
+
+            sudo apt-get update
+            sudo apt-get install -y wget gnupg
+
+            wget -qO- https://aquasecurity.github.io/trivy-repo/deb/public.key \
+              | gpg --dearmor \
+              | sudo tee /usr/share/keyrings/trivy.gpg >/dev/null
+
+            echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb generic main" \
+              | sudo tee /etc/apt/sources.list.d/trivy.list
+
+            sudo apt-get update
+            sudo apt-get install -y trivy
+          else
+            echo "Trivy already installed"
+          fi
+
+          trivy --version
 
       - name: Trivy filesystem scan
         run: |
@@ -60,6 +88,11 @@ jobs:
             --format json \
             --output trivy-report.json \
             .
+
+
+      # -------------------------
+      # CHECK REPORTS
+      # -------------------------
 
       - name: Show generated reports
         run: |
