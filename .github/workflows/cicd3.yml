@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths-ignore:
-      - 'github/workflows/**'
+      - '.github/workflows/**'
 
 jobs:
 
@@ -21,34 +21,21 @@ jobs:
 
       - name: Setup Maven
         run: |
-         if ! command -v mvn >/dev/null 2>&1; then
-           echo "Maven not found. Installing..."
-           sudo apt-get update
-           sudo apt-get install -y maven
-         else
+          if ! command -v mvn >/dev/null 2>&1; then
+            echo "Maven not found. Installing..."
+
+            sudo apt-get \
+            -o DPkg::Lock::Timeout=120 \
+            update
+
+            sudo apt-get \
+            -o DPkg::Lock::Timeout=120 \
+            install -y maven
+          else
            echo "Maven already installed"
-         fi
+          fi
 
-         mvn --version  
-
-
-- name: Setup Maven
-  run: |
-    if ! command -v mvn >/dev/null 2>&1; then
-      echo "Maven not found. Installing..."
-
-      sudo apt-get \
-        -o DPkg::Lock::Timeout=120 \
-        update
-
-      sudo apt-get \
-        -o DPkg::Lock::Timeout=120 \
-        install -y maven
-    else
-      echo "Maven already installed"
-    fi
-
-    mvn --version
+          mvn --version
 
 
   security-checksjob:
