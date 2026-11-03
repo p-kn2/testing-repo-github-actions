@@ -22,37 +22,19 @@ jobs:
       - name: Setup Maven
         run: |
           if ! command -v mvn >/dev/null 2>&1; then
-            echo "Maven not found. Installing..."
+            echo "Maven not installed. Installing..."
 
-            sudo apt-get \
-            -o DPkg::Lock::Timeout=120 \
-            update
+            sudo apt-get update
 
-            sudo apt-get \
-            -o DPkg::Lock::Timeout=120 \
-            install -y maven
+            sudo env \
+              DEBIAN_FRONTEND=noninteractive \
+              NEEDRESTART_MODE=a \
+              apt-get -o DPkg::Lock::Timeout=120 install -y maven
           else
-           echo "Maven already installed"
+            echo "Maven already installed"
           fi
 
           mvn --version
-
-- name: Setup Maven
-  run: |
-    if ! command -v mvn >/dev/null 2>&1; then
-      echo "Maven not installed. Installing..."
-
-      sudo apt-get update
-
-      sudo env \
-        DEBIAN_FRONTEND=noninteractive \
-        NEEDRESTART_MODE=a \
-        apt-get -o DPkg::Lock::Timeout=120 install -y maven
-    else
-      echo "Maven already installed"
-    fi
-
-    mvn --version
 
   security-checksjob:
     runs-on: [self-hosted, ec2]
