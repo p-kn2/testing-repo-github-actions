@@ -3,7 +3,7 @@ name: CICD pipeline
 on:
   push:
     branches:
-      - main
+      - none
     paths-ignore:
       - 'github/workflows/**'
 
