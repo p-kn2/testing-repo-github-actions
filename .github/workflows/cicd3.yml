@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths-ignore:
-      - 'github/workflows/**'
+      - '.github/workflows/**'
 
 jobs:
 
@@ -30,14 +30,15 @@ jobs:
         with:
           fetch-depth: 0
 
-      # -------------------------
+
+      # ----------------
       # GITLEAKS
-      # -------------------------
+      # ----------------
 
       - name: Setup Gitleaks
         run: |
           if ! command -v gitleaks >/dev/null 2>&1; then
-            echo "Gitleaks not found. Installing..."
+            echo "Installing Gitleaks..."
             sudo apt-get update
             sudo apt-get install -y gitleaks
           else
@@ -45,6 +46,7 @@ jobs:
           fi
 
           gitleaks version
+
 
       - name: Gitleaks scan
         run: |
@@ -55,32 +57,25 @@ jobs:
             --verbose
 
 
-      # -------------------------
+      # ----------------
       # TRIVY
-      # -------------------------
+      # ----------------
 
       - name: Setup Trivy
         run: |
           if ! command -v trivy >/dev/null 2>&1; then
-            echo "Trivy not found. Installing..."
+            echo "Installing Trivy..."
 
-            sudo apt-get update
-            sudo apt-get install -y wget gnupg
+            curl -sfL \
+              https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh \
+              | sudo sh -s -- -b /usr/local/bin v0.76.1
 
-            wget -qO- https://aquasecurity.github.io/trivy-repo/deb/public.key \
-              | gpg --dearmor \
-              | sudo tee /usr/share/keyrings/trivy.gpg >/dev/null
-
-            echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb generic main" \
-              | sudo tee /etc/apt/sources.list.d/trivy.list
-
-            sudo apt-get update
-            sudo apt-get install -y trivy
           else
             echo "Trivy already installed"
           fi
 
           trivy --version
+
 
       - name: Trivy filesystem scan
         run: |
@@ -90,10 +85,11 @@ jobs:
             .
 
 
-      # -------------------------
-      # CHECK REPORTS
-      # -------------------------
+      # ----------------
+      # REPORTS
+      # ----------------
 
       - name: Show generated reports
         run: |
+          echo "Security reports:"
           ls -lh gitleaks-report.json trivy-report.json
