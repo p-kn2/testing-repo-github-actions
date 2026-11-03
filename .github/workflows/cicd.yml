@@ -10,7 +10,7 @@ on:
 
 jobs:
   firstjob:
-    runs-on: ubuntu-latest    
+    runs-on: ec2    
 
     steps:
       - name: checkout repository
