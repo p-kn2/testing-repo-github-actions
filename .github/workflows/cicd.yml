@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - main
-
-      
     paths-ignore:
       - 'github/workflows/**'
 
@@ -22,7 +20,7 @@ jobs:
 
 
   security-checksjob:
-    runs-on: ubuntu-latest
+    runs-on: ec2
     needs: firstjob
 
     steps:
