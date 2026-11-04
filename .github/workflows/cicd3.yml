@@ -107,6 +107,7 @@ jobs:
       - name: Trivy filesystem scan
         run: |
           trivy fs \
+            --offline-scan \
             --format json \
             --output trivy-report.json \
             .
