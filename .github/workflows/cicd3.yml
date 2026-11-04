@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths-ignore:
-      - '.github/workflows/**'
+      - 'github/workflows/**'
 
 jobs:
 
@@ -111,6 +111,19 @@ jobs:
           ls -lh gitleaks-report.json trivy-report.json
 
 
+  test:
+    runs-on: self-hosted
+    needs: security-checksjob
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+    - name: Unit Test Cases
+      run: mvn test
 
 
 
