@@ -182,6 +182,14 @@ jobs:
     needs: build_project_and_sonar_scan
     steps:
     - uses: actions/checkout@v4
+
+    - name: check docker access
+      run: |
+        whoami
+        id
+        docker -version
+        docker ps
+        
     - name: Download JAR artifact
       uses: actions/download-artifact@v4
       with:
