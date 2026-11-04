@@ -187,7 +187,7 @@ jobs:
       run: |
         whoami
         id
-        docker -version
+        docker --version
         docker ps
         
     - name: Download JAR artifact
