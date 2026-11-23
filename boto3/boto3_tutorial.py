@@ -8,7 +8,14 @@ ec2_client = boto3.client(
 ec2_client.describe_instances()
 print('helo')
 response = ec2_client.describe_instances()
-print(response)
+for reservation in response['Reservations']:
+    for instance in reservation['Instances']:
+        print("Instance ID:", instance['InstanceId'])
+        print("State:", instance['State']['Name'])
+        print("Instance Type:", instance['InstanceType'])
+        print("Private IP:", instance.get('PrivateIpAddress'))
+        print("Public IP:", instance.get('PublicIpAddress'))
+        print("-----------------------")
 
 
 
